@@ -1,9 +1,12 @@
 from flask import Flask,request
 import os
-
+from sqlalchemy import desc
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 
+engine = create_engine('sqlite:///amoc.db')
 
 @app.route('/')
 @app.route('/index')
