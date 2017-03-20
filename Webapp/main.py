@@ -6,10 +6,9 @@ from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 
-<<<<<<< HEAD
-=======
+
 engine = create_engine('sqlite:///amoc.db')
->>>>>>> b9637617df5138fd38056a4efdef4a6d388221f8
+
 
 @app.route('/')
 @app.route('/index')
