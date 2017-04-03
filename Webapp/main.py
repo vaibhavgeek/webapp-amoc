@@ -88,6 +88,21 @@ def Edit():
     return "Edit here"
 
 
+def login(username, password):
+	data = {
+	'mode':'191',
+	'username':username,
+	'password':password,
+	'a':'1439199700564',
+	'producttype':'0'
+	}
+	send=requests.post('http://172.50.1.1:8090/login.xml',data=data).text
+	soup = BeautifulSoup(send)
+	if soup.message.string == "You have successfully logged in" or soup.message.string == "You have reached Maximum Login Limit.":
+		return "true"
+	else:
+		return "false"
+
 if __name__ == '__main__':
     app.secret_key = "unknown_cookie_values_present_here_so_that_it_remains_secret_so_dont worry_its still secret"
     app.debug = True
