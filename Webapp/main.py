@@ -24,23 +24,23 @@ def Login():
 		return 'login data here'
 	return "login information up here"
 
-@app.route('/students/<rollno>/odd/course_name')
+@app.route('/students/<rollno>/course_name')
 def Courses(rollno):
 	return "Courses info is here"
 
-@app.route('/students/<rollno>/odd/time_table')
+@app.route('/students/<rollno>/time_table')
 def Time_table(rollno):
 	return "Time table here"
 
-@app.route('/students/<rollno>/odd/attendence')
+@app.route('/students/<rollno>/attendence')
 def Attendence(rollno):
 	return "Attendence here"
 
-@app.route('/students/<rollno>/odd/courses/course_code')
+@app.route('/students/<rollno>/courses/course_code')
 def Course_code(rollno):
 	return "Course code here"
 
-@app.route('/students/<rollno>/odd/courses/course_code/syllabus')
+@app.route('/students/<rollno>/courses/course_code/syllabus')
 def Syllabus(rollno):
 	return "syllabus here"
 
