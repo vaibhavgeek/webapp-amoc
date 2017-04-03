@@ -62,17 +62,23 @@ class Attendence(Base):
 @property
 def serialize(self):
     return {
+        # courses
         'id': self.id,
         'course_code': self.course_code,
         'course_name_long': self.course_name_long,
         'course_name_short': self.course_name_short,
-        'time_created': self.time_created,
         'year': self.year,
         'branch': self.branch,
         'semester': self.semester,
-        'rollno': self.rollno,
-        'password': self.password,
-        'name': self.name,
+        # TimeTable
+        'course_id': self.course_id,
+        'day': self.day,
+        'time': self.time,
+        'branch_code': self.branch_code,
+
+
+        'time_created': self.time_created,
+
     }
 
 

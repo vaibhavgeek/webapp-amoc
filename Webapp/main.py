@@ -51,6 +51,8 @@ def Time_table(rollno):
         return jsonify(Error={'invalid rollno': 'invalid'})
 
 
+
+
 @app.route('/students/<rollno>/odd/attendence')
 def Attendence(rollno):
     return "Attendence here"
