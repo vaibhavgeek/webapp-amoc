@@ -5,7 +5,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import sys
 import requests
+from flask_restful import Resource, Api
 from BeautifulSoup import BeautifulSoup
+
+api = Api(app)
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///amoc.db')
