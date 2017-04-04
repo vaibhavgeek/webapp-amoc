@@ -21,8 +21,11 @@ def Index():
 @app.route('/login', methods=['GET','POST'])
 def Login():
 	if request.method == 'POST':
-		return 'login data here'
-	return "login information up here"
+		username = request.form["username"]
+		password = request.form["password"]
+		return login(username,password)
+	else:
+		return "Parameters not found for login"
 
 @app.route('/students/<rollno>/course_name')
 def Courses(rollno):
