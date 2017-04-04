@@ -23,13 +23,14 @@ def Index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def Login():
-    if request.method == 'POST':
-        return 'login data here'
-    return "login information up here"
+	if request.method == 'POST':
+		username = request.form["username"]
+		password = request.form["password"]
+		return login(username,password)
+	else:
+		return "Parameters not found for login"
 
-
-# making api endpoint for Courses
-@app.route('/students/<rollno>/odd/course_name')
+@app.route('/students/<rollno>/course_name')
 def Courses(rollno):
     valuebsr = main(rollno)
 	# passing the rollno in a function and checking whether its valid or not
@@ -42,7 +43,7 @@ def Courses(rollno):
         return jsonify(Course_details=[i.serialize for i in Course])
 
 
-@app.route('/students/<rollno>/odd/time_table')
+@app.route('/students/<rollno>/time_table')
 def Time_table(rollno):
 	valuebsr = main(rollno)
 	# passing the rollno in a function and checking whether its valid or not
@@ -53,17 +54,17 @@ def Time_table(rollno):
 
 
 
-@app.route('/students/<rollno>/odd/attendence')
+@app.route('/students/<rollno>/attendence')
 def Attendence(rollno):
     return "Attendence here"
 
 
-@app.route('/students/<rollno>/odd/courses/course_code')
+@app.route('/students/<rollno>/courses/course_code')
 def Course_code(rollno):
     return "Course code here"
 
 
-@app.route('/students/<rollno>/odd/courses/course_code/syllabus')
+@app.route('/students/<rollno>/courses/course_code/syllabus')
 def Syllabus(rollno):
     return "syllabus here"
 
