@@ -5,6 +5,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from flask_migrate import Migrate
 
 Base = declarative_base()
 
@@ -32,8 +33,6 @@ class Courses(Base):
     semester = Column(String)
     syllabus_url = Column(String)
     question_paper_url = Column(String)
-    #Owner_id = Column(Integer,ForeignKey('user.id'))
-    #user = relationship(Users)
 
 
 class TimeTable(Base):
@@ -62,22 +61,29 @@ class Attendence(Base):
 @property
 def serialize(self):
     return {
-        # courses
+        # common in all table
         'id': self.id,
+        'time_created': self.time_created,
+        # students
+
+        # courses
         'course_code': self.course_code,
         'course_name_long': self.course_name_long,
         'course_name_short': self.course_name_short,
         'year': self.year,
         'branch': self.branch,
         'semester': self.semester,
+        'syllabus_url': self.syllabus_url,
+        'question_paper_url': self.question_paper_url,
         # TimeTable
-        'course_id': self.course_id,
-        'day': self.day,
-        'time': self.time,
-        'branch_code': self.branch_code,
-
-
-        'time_created': self.time_created,
+        #'course_id': self.course_id,
+        #'day': self.day,
+        #'time': self.time,
+        #'branch_code': self.branch_code,
+        # Attendence
+        #'present': self.present,
+        #'date': self.date,
+        #'timetable_id': self.timetable_id
 
     }
 
@@ -89,5 +95,5 @@ def error(self):
     }
 
 
-engine = create_engine('sqlite:///Blog.db')
+engine = create_engine('sqlite:///amoc.db')
 Base.metadata.create_all(engine)
