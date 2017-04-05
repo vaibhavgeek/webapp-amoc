@@ -1,93 +1,102 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, LargeBinary
+from flask import Flask
 from sqlalchemy.sql import func
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
+from flask_sqlalchemy import SQLAlchemy
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
-Base = declarative_base()
+app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
 
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-class Students(Base):
-    __tablename__ = 'student'
-
-    id = Column(Integer, primary_key=True)
-    rollno = Column(String(250), nullable=False)
-    password = Column(String(100), nullable=False)
-    name = Column(String(100))
-    image = Column(LargeBinary)
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 
-class Courses(Base):
+class Students(db.Model):
+    __tablename__ = 'students'
+    id = db.Column(db.Integer, primary_key=True)
+    rollno = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100))
+    image = db.Column(db.LargeBinary)
+    time_created = db.Column(db.DateTime(
+        timezone=True), server_default=func.now())
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'rollno': self.rollno,
+            'password': self.password,
+            'name': self.name,
+            'time_created': self.time_created,
+        }
+
+
+class Courses(db.Model):
     __tablename__ = 'course'
-    id = Column(Integer, primary_key=True)
-    course_code = Column(String(250))
-    course_name_long = Column(String)
-    course_name_short = Column(String)
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    year = Column(String)
-    branch = Column(String)
-    semester = Column(String)
-    syllabus_url = Column(String)
-    question_paper_url = Column(String)
-    #Owner_id = Column(Integer,ForeignKey('user.id'))
-    #user = relationship(Users)
+    id = db.Column(db.Integer, primary_key=True)
+    course_code = db.Column(db.String(250))
+    course_name_long = db.Column(db.String)
+    course_name_short = db.Column(db.String)
+    time_created = db.Column(db.DateTime(
+        timezone=True), server_default=func.now())
+    year = db.Column(db.String)
+    branch = db.Column(db.String)
+    semester = db.Column(db.String)
+    # Owner_id = db.Column(db.Integer,ForeignKey('user.id'))
+    # user = relationship(Users)
+
+    @property
+    def serialize(self):
+        return {
+            'time_created': self.time_created,
+            'id': self.id,
+            'course_code': self.course_code,
+            'course_name_long': self.course_name_long,
+            'course_name_short': self.course_name_short,
+            'year': self.year,
+            'branch': self.branch,
+            'semester': self.semester,
+        }
 
 
-class TimeTable(Base):
+class TimeTable(db.Model):
     """docstring for ClassName"""
     __tablename__ = 'timetable'
 
-    id = Column(Integer, primary_key=True)
-    course_id = Column(Integer, ForeignKey('course.id'))
-    day = Column(String)
-    time = Column(String)
-    branch_code = Column(String)
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    course_rel = relationship(Courses)
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
+    day = db.Column(db.String)
+    time = db.Column(db.String)
+    branch_code = db.Column(db.String)
+    time_created = db.Column(db.DateTime(
+        timezone=True), server_default=func.now())
+    course_rel = db.relationship('Courses')
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'course_id': self.course_id,
+            'day': self.day,
+            'time': self.time,
+            'branch_code': self.branch_code,
+            'time_created': self.time_created,
+        }
 
 
-class Attendence(Base):
+class Attendence(db.Model):
     __tablename__ = 'attendence'
-    id = Column(Integer, primary_key=True)
-    present = Column(String)
-    date = Column(String, nullable=False)
-    timetable_id = Column(Integer, ForeignKey('timetable.id'))
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    timetable_rel = relationship(TimeTable)
-
-
-@property
-def serialize(self):
-    return {
-        # courses
-        'id': self.id,
-        'course_code': self.course_code,
-        'course_name_long': self.course_name_long,
-        'course_name_short': self.course_name_short,
-        'year': self.year,
-        'branch': self.branch,
-        'semester': self.semester,
-        # TimeTable
-        'course_id': self.course_id,
-        'day': self.day,
-        'time': self.time,
-        'branch_code': self.branch_code,
-
-
-        'time_created': self.time_created,
-
-    }
-
-
-@property
-def error(self):
-    return {
-        'invalid_rollno': self.rollno
-    }
-
-
-engine = create_engine('sqlite:///Blog.db')
-Base.metadata.create_all(engine)
+    id = db.Column(db.Integer, primary_key=True)
+    present = db.Column(db.String)
+    date = db.Column(db.String, nullable=False)
+    timetable_id = db.Column(db.Integer, db.ForeignKey('timetable.id'))
+    time_created = db.Column(db.DateTime(
+        timezone=True), server_default=func.now())
+    timetable_rel = db.relationship('TimeTable')
