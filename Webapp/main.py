@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from rollno_parse import main
-from database import Courses, Attendence, TimeTable, Students, serialize
+from database import Courses, Attendence, TimeTable, Students
 from flask_migrate import Migrate
 import os
 import sys
@@ -35,15 +35,15 @@ def Login():
 		return "Parameters not found for login"
 
 @app.route('/students/<rollno>/course_name')
-def Courses(rollno):
+def Course_details(rollno):
     valuebsr = main(rollno)
     # passing the rollno in a function and checking whether its valid or not
     if main(rollno) is False:
         # returning json object of Error due to wrong roll no
         return jsonify(Error={'invalid rollno': 'invalid'})
     else:
-    Course = Courses.query.all()
-    return jsonify(Course_details=[i.serialize for i in Course])
+    	Course = Courses.query.all()
+    	return jsonify(Course_details=[i.serialize for i in Course])
 
 
 @app.route('/students/<rollno>/time_table')
