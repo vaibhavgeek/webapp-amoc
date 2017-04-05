@@ -7,6 +7,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
 
 db = SQLAlchemy(app)
@@ -26,14 +27,15 @@ class Students(db.Model):
     time_created = db.Column(db.DateTime(
         timezone=True), server_default=func.now())
 
-    def __init__(self, rollno, password, name, time_created):
-        self.rollno = rollno
-        self.password = password
-        self.name = name
-        self.time_created = time_created
-
-    def __repr__(self):
-        return '<Post %r>' % self.name
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'rollno': self.rollno,
+            'password': self.password,
+            'name': self.name,
+            'time_created': self.time_created,
+        }
 
 
 class Courses(db.Model):
@@ -47,9 +49,21 @@ class Courses(db.Model):
     year = db.Column(db.String)
     branch = db.Column(db.String)
     semester = db.Column(db.String)
+    # Owner_id = db.Column(db.Integer,ForeignKey('user.id'))
+    # user = relationship(Users)
 
-    #Owner_id = db.Column(db.Integer,ForeignKey('user.id'))
-    #user = relationship(Users)
+    @property
+    def serialize(self):
+        return {
+            'time_created': self.time_created,
+            'id': self.id,
+            'course_code': self.course_code,
+            'course_name_long': self.course_name_long,
+            'course_name_short': self.course_name_short,
+            'year': self.year,
+            'branch': self.branch,
+            'semester': self.semester,
+        }
 
 
 class TimeTable(db.Model):
@@ -64,6 +78,17 @@ class TimeTable(db.Model):
     time_created = db.Column(db.DateTime(
         timezone=True), server_default=func.now())
     course_rel = db.relationship('Courses')
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'course_id': self.course_id,
+            'day': self.day,
+            'time': self.time,
+            'branch_code': self.branch_code,
+            'time_created': self.time_created,
+        }
 
 
 class Attendence(db.Model):
@@ -97,11 +122,4 @@ def serialize(self):
 
         'time_created': self.time_created,
 
-    }
-
-
-@property
-def error(self):
-    return {
-        'invalid_rollno': self.rollno
     }
