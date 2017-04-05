@@ -100,26 +100,3 @@ class Attendence(db.Model):
     time_created = db.Column(db.DateTime(
         timezone=True), server_default=func.now())
     timetable_rel = db.relationship('TimeTable')
-
-
-@property
-def serialize(self):
-    return {
-        # courses
-        'id': self.id,
-        'course_code': self.course_code,
-        'course_name_long': self.course_name_long,
-        'course_name_short': self.course_name_short,
-        'year': self.year,
-        'branch': self.branch,
-        'semester': self.semester,
-        # TimeTable
-        'course_id': self.course_id,
-        'day': self.day,
-        'time': self.time,
-        'branch_code': self.branch_code,
-
-
-        'time_created': self.time_created,
-
-    }

@@ -28,7 +28,10 @@ def Index():
 @app.route('/login', methods=['GET', 'POST'])
 def Login():
     if request.method == 'POST':
-        return 'login data here'
+        username = request.form.get("username")
+        password = request.form.get('password')
+        return username
+
     return "login information up here"
 
 
@@ -41,17 +44,23 @@ def Course_details(rollno):
         # returning json object of Error due to wrong roll no
         return jsonify(Error={'invalid rollno': 'invalid'})
     else:
-        Course = Courses.query.all()
-        return jsonify(Course_details=[i.serialize for i in Course])
+    Course = Courses.query.all()
+    return jsonify(Course_details=[i.serialize for i in Course])
 
 
-@app.route('/students/<rollno>/odd/time_table')
+@app.route('/students/<rollno>/time_table')
 def Time_table(rollno):
     valuebsr = main(rollno)
     # passing the rollno in a function and checking whether its valid or not
     if main(rollno) is False:
         # returning json object of Error due to wrong roll no
         return jsonify(Error={'invalid rollno': 'invalid'})
+    else:
+        Course = sessions.query(Courses).filter_by(semester=valuebsr[1],
+                                                   branch='valuebsr[0]').one()
+        Timetable = sessions.query(TimeTable).filter_by(course_rel=Course)
+
+        return jsonify(TimeTable=[i.serialize for i in Timetable])
 
 
 @app.route('/students/<rollno>/odd/attendence')
@@ -59,12 +68,17 @@ def Attendence(rollno):
     return "Attendence here"
 
 
-@app.route('/students/<rollno>/odd/courses/course_code')
+@app.route('/students/<rollno>/courses/course_code')
 def Course_code(rollno):
-    return "Course code here"
+    # passing the rollno in a function and checking whether its valid or not
+    if main(rollno) is False:
+        # returning json object of Error due to wrong roll no
+        return jsonify(Error={'invalid rollno': 'invalid'})
+    else:
+        Course = sessions.query(Courses).filter_by(semester=valuebsr[1])
 
 
-@app.route('/students/<rollno>/odd/courses/course_code/syllabus')
+@app.route('/students/<rollno>/courses/course_code/syllabus')
 def Syllabus(rollno):
     return "syllabus here"
 
