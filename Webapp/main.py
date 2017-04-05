@@ -27,17 +27,15 @@ def Index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def Login():
-    if request.method == 'POST':
-        username = request.form.get("username")
-        password = request.form.get('password')
-        return username
+	if request.method == 'POST':
+		username = request.form["username"]
+		password = request.form["password"]
+		return login(username,password)
+	else:
+		return "Parameters not found for login"
 
-    return "login information up here"
-
-
-# making api endpoint for Courses
-@app.route('/students/<rollno>/odd/course_name')
-def Course_details(rollno):
+@app.route('/students/<rollno>/course_name')
+def Courses(rollno):
     valuebsr = main(rollno)
     # passing the rollno in a function and checking whether its valid or not
     if main(rollno) is False:
@@ -63,7 +61,7 @@ def Time_table(rollno):
         return jsonify(TimeTable=[i.serialize for i in Timetable])
 
 
-@app.route('/students/<rollno>/odd/attendence')
+@app.route('/students/<rollno>/attendence')
 def Attendence(rollno):
     return "Attendence here"
 
