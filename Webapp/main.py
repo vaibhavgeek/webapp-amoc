@@ -8,7 +8,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-
+import requests
+from BeautifulSoup import BeautifulSoup
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
 
@@ -46,7 +47,7 @@ def Course_details(rollno):
     	return jsonify(Course_details=[i.serialize for i in Course])
 
 
-@app.route('/students/<rollno>/time_table')
+@app.route('/students/<rollno>/time_table' , methods = ['GET' , 'POST'])
 def Time_table(rollno):
     valuebsr = main(rollno)
     # passing the rollno in a function and checking whether its valid or not
@@ -54,11 +55,11 @@ def Time_table(rollno):
         # returning json object of Error due to wrong roll no
         return jsonify(Error={'invalid rollno': 'invalid'})
     else:
-        Course = sessions.query(Courses).filter_by(semester=valuebsr[1],
-                                                   branch='valuebsr[0]').one()
-        Timetable = sessions.query(TimeTable).filter_by(course_rel=Course)
-
-        return jsonify(TimeTable=[i.serialize for i in Timetable])
+        #Course = Courses.query.filter_by(semester='valuebsr[1]',
+        #                                      branch_code='valuebsr[0]').one()
+        Tt = TimeTable.query.filter_by(semester=str(valuebsr[1]),
+                                              branch_code=str(valuebsr[0])).all()
+        return jsonify(TimeTable=[i.serialize for i in Tt])
 
 
 @app.route('/students/<rollno>/attendence')
@@ -94,7 +95,7 @@ def Signup():
     return "Signup here"
 
 
-@app.route('/students/<rollno>/edit', methods=['GET', 'POST'])
+@app.route('/students/<rollno>/edit', methods=['GET', 'POST' , 'PUT'])
 def Edit():
     if request.method == 'POST':
         return "editted data here"
@@ -112,9 +113,9 @@ def login(username, password):
     send = requests.post('http://172.50.1.1:8090/login.xml', data=data).text
     soup = BeautifulSoup(send)
     if soup.message.string == "You have successfully logged in" or soup.message.string == "You have reached Maximum Login Limit.":
-        return "true"
+        return jsonify(username=username)
     else:
-        return "false"
+        return "invalid auth"
 
 
 if __name__ == '__main__':

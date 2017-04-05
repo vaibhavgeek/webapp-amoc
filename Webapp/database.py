@@ -44,6 +44,9 @@ class Courses(db.Model):
     course_code = db.Column(db.String(250))
     course_name_long = db.Column(db.String)
     course_name_short = db.Column(db.String)
+    course_name = db.Column(db.String)
+    course_type = db.Column(db.String)
+    course_by = db.Column(db.String)
     time_created = db.Column(db.DateTime(
         timezone=True), server_default=func.now())
     year = db.Column(db.String)
@@ -60,6 +63,8 @@ class Courses(db.Model):
             'course_code': self.course_code,
             'course_name_long': self.course_name_long,
             'course_name_short': self.course_name_short,
+            'course_by' : self.course_by,
+            'course_type' : self.course_type,
             'year': self.year,
             'branch': self.branch,
             'semester': self.semester,
@@ -74,6 +79,10 @@ class TimeTable(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
     day = db.Column(db.String)
     time = db.Column(db.String)
+    semester = db.Column(db.String)
+    course_name = db.Column(db.String)
+    course_type = db.Column(db.String)
+    course_by = db.Column(db.String)
     branch_code = db.Column(db.String)
     time_created = db.Column(db.DateTime(
         timezone=True), server_default=func.now())
@@ -85,6 +94,9 @@ class TimeTable(db.Model):
             'id': self.id,
             'course_id': self.course_id,
             'day': self.day,
+            'course_name' : self.course_name,
+            'course_type' : self.course_type ,
+            'course_by' : self.course_by,
             'time': self.time,
             'branch_code': self.branch_code,
             'time_created': self.time_created,
